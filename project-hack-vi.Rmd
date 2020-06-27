@@ -1,0 +1,43 @@
+---
+title: "project-hack-vi"
+author: "Phillip Abbott"
+date: "June 27, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Organize the Monte Carlo Applications & Publish to Git
+
+```{r}
+
+library(tidyverse)
+
+Rcpp::sourceCpp ("src/collapse.cpp")
+
+xxx %>% sample_frac(.9) %>% cm0(999) %>% hist(breaks=29)
+
+```
+
+```{r}
+
+
+xxx <- read.csv("src/xxx.csv")
+
+cm0 <- function(it, n= 19)  collapse_many(n, it$b, it$e, it$w, it$p )
+
+xxx %>% sample_frac(.9) %>% cm0(999) %>% hist(breaks=29)
+
+rm(cm0)
+
+ rm (xxx)
+
+
+
+```
+
+
+
+
