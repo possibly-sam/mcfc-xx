@@ -1,0 +1,1 @@
+g++ -DRAW -shared -Wl,-soname,testlib -o testlib.so -fPIC collapse.cpp

@@ -39,5 +39,68 @@ rm(cm0)
 ```
 
 
+```{python}
+
+
+import ctypes
+import numpy as np
+import numpy.ctypeslib as ctl
+
+testlib = ctypes.CDLL('/home/phillip/Documents/stt/project-hack-vi/mcfc-xx/pysrc/testlib.so')
+# testlib.do_mc(99)
+
+py_print_array = testlib.print_array
+py_print_array.argtypes = [ctl.ndpointer(np.float64, 
+                                         flags='aligned, c_contiguous'), 
+                           ctypes.c_int]
+A = np.array([1.4,2.6,3.0, 1.1], dtype=np.float64)
+py_print_array(A, 3)
+
+print("\n\n")
+
+
+
+mcfc_collapse_all = testlib.py_collapse_all
+mcfc_collapse_all.restype = ctypes.c_double
+mcfc_collapse_all.argtypes = [ctypes.c_int,
+                                ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), 
+                                ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), 
+                                ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), 
+                                ctl.ndpointer(np.float64, flags='aligned, c_contiguous') ]
+
+print(mcfc_collapse_all(5, A, A, A, A));
+
+print("\n\n\nfrodo livesx");
+
+
+```
+
+```{r}
+library(tidyverse)
+
+source("src/create_simulated_risks.R")
+
+simulated_risks$get_some_sample_risks(9);
+
+```
+
+
+
+```{python}
+
+import pandas as pd
+
+xxx = pd.read_csv('src/xxx.csv')  
+
+print(xxx['p'])
+
+```
+
+
+
+
+
+
+
 
 

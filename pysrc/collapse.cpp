@@ -100,7 +100,35 @@ NumericVector  readme(const char* filename) {
 
 extern "C" {
     int do_mc(int n) ;
+  
+  int py_sum(int* b, int n) ;
+  
 }
+
+
+extern "C" void print_array(double* array, int N)
+{
+  for (int i=0; i<N; i++) 
+    cout << i << " " << array[i] << endl;
+}
+
+
+
+extern "C" double py_collapse_all(int n, double* b0, double* e0, double* w0, double* p0)  {
+  
+  double x0 = accumulate(b0, static_cast<double*>(b0+n),0) ;
+  cout << "x0:  "<< x0 << endl;
+  return x0;
+  
+  
+  }
+
+
+int py_sum(int n) {
+  return n*n;
+  // return accumulate(b, b+n, 0);
+}
+
 
 int main(int argc, char** argv) {
   
