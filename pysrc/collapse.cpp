@@ -116,11 +116,34 @@ extern "C" void print_array(double* array, int N)
 ////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+// histogram, issues
+pair<NumericVector, NumericVector> next_month(int repeats, 
+                                              const NumericVector& b,
+                                              const NumericVector& e,
+                                              const NumericVector& w,
+                                              NumericVector& p) {
+  
+  pair<NumericVector, NumericVector> result = make_pair(collapse_many(repeats, b,e,w,p),collapse_all( b,e,w,p)  )  ;
+  
+  sort(result.first.begin(), result.first.end());
+
+    // For feb, adjust the (b,e,w,p) vectors =>  set p = 0 if ijan != 0
+  for (int k = 0; k != p.size(); ++k) {
+    if (0 < result.second[k]) p[k] = 0;
+  }
+  
+  return result;
+  
+}
+
+
+
 extern "C" void py_months(int n_months, 
                          double* issues,
                          double* percent_50,
                          double* percent_80,
                          double* percent_95,
+                         int repeats,
                          int n, double* b0, double* e0, double* w0, double* p0 )  {
   
   
@@ -130,49 +153,23 @@ extern "C" void py_months(int n_months,
   NumericVector  w(w0, w0+n);
   NumericVector  p(p0, p0+n);
   
-  NumericVector  hjan = collapse_many(n, b,e,w,p); // this is the histogram for Jan.
-  NumericVector  ijan = collapse_all( b,e,w,p); // this is the issues for Jan.
+  for (NumericVector::iterator it = p.begin(); it != p.end(); ++it) *it = *it/12;
   
-  sort(hjan.begin(), hjan.end());
-  // For feb, adjust the (b,e,w,p) vectors =>  set p = 0 if ijan != 0
+  double last_months_issues = 0;
   
-  for (int k = 0; k != n; ++k) {
-    if (0 < ijan[k]) p[k] = 0;
-  }
-
-  NumericVector  hfeb = collapse_many(n, b,e,w,p); // this is the histogram for Jan.
-  NumericVector  ifeb = collapse_all( b,e,w,p); // this is the issues for Jan.
-  sort(hfeb.begin(), hfeb.end());
-  
-  
-  
-  
-  
-  //double x0 = accumulate(r0.begin(), r0.end(), 0) ;  
-  
-
   for (int k = 0; k != n_months; ++k) {
-    issues[k] = 0; 
-    percent_50[k] = 0;
-    percent_80[k] = 0;
-    percent_95[k] = 0;
-    
-  }
-  
-  issues[0] = 0;
-  percent_50[0] = hjan[static_cast<int>(0.50*n)];
-  percent_80[0] = hjan[static_cast<int>(0.80*n)];
-  percent_95[0] = hjan[static_cast<int>(0.95*n)];;
-  
-  
-  issues[1] = accumulate(ijan.begin(), ijan.end(), 0) ;
-  percent_50[1] = issues[1] + hfeb[static_cast<int>(0.50*n)];
-  percent_80[1] = issues[1] + hfeb[static_cast<int>(0.80*n)];
-  percent_95[1] = issues[1] + hfeb[static_cast<int>(0.95*n)];;
-  
-  
-  
+    issues[k] = last_months_issues; 
 
+    pair<NumericVector,NumericVector >  xxx = next_month(repeats, b,e,w,p);
+
+    percent_50[k] = last_months_issues + xxx.first[static_cast<int>(0.50*repeats)];
+    percent_80[k] = last_months_issues + xxx.first[static_cast<int>(0.80*repeats)];
+    percent_95[k] = last_months_issues + xxx.first[static_cast<int>(0.95*repeats)];
+    last_months_issues += accumulate(xxx.second.begin(), xxx.second.end(), 0);
+  
+  }
+ 
+  
   return;  
 }
 

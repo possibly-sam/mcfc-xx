@@ -106,7 +106,7 @@ Px = np.array(xxx['p'], dtype=np.float64)
 
   
 
-testlib.py_months.argtypes = c_int, POINTER(c_double), POINTER(c_double), POINTER(c_double), POINTER(c_double),c_int, ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), ctl.ndpointer(np.float64, flags='aligned, c_contiguous')
+testlib.py_months.argtypes = c_int, POINTER(c_double), POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int, c_int, ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), ctl.ndpointer(np.float64, flags='aligned, c_contiguous')
 testlib.py_months.restype = None
 
 
@@ -116,7 +116,7 @@ percent_80 = (c_double*12)()
 percent_95 = (c_double*12)()
 
 
-testlib.py_months(12, issues, percent_50, percent_80, percent_95, 99, Bx, Ex, Wx, Px)
+testlib.py_months(12, issues, percent_50, percent_80, percent_95, 99, 999, Bx, Ex, Wx, Px)
 
 print(list(issues))
 print(list(percent_50))
