@@ -113,7 +113,8 @@ extern "C" void print_array(double* array, int N)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
 
 extern "C" void py_months(int n_months, 
                          double* issues,
@@ -121,17 +122,63 @@ extern "C" void py_months(int n_months,
                          double* percent_80,
                          double* percent_95,
                          int n, double* b0, double* e0, double* w0, double* p0 )  {
+  
+  
+  
+  NumericVector  b(b0, b0+n);
+  NumericVector  e(e0, e0+n);
+  NumericVector  w(w0, w0+n);
+  NumericVector  p(p0, p0+n);
+  
+  NumericVector  hjan = collapse_many(n, b,e,w,p); // this is the histogram for Jan.
+  NumericVector  ijan = collapse_all( b,e,w,p); // this is the issues for Jan.
+  
+  sort(hjan.begin(), hjan.end());
+  // For feb, adjust the (b,e,w,p) vectors =>  set p = 0 if ijan != 0
+  
+  for (int k = 0; k != n; ++k) {
+    if (0 < ijan[k]) p[k] = 0;
+  }
+
+  NumericVector  hfeb = collapse_many(n, b,e,w,p); // this is the histogram for Jan.
+  NumericVector  ifeb = collapse_all( b,e,w,p); // this is the issues for Jan.
+  sort(hfeb.begin(), hfeb.end());
+  
+  
+  
+  
+  
+  //double x0 = accumulate(r0.begin(), r0.end(), 0) ;  
+  
 
   for (int k = 0; k != n_months; ++k) {
-    issues[k] = 1.1+k; 
-    percent_50[k] = 2.2 + k;
-    percent_80[k] = 4.4 + k;
-    percent_95[k] = 8.8 + k;
+    issues[k] = 0; 
+    percent_50[k] = 0;
+    percent_80[k] = 0;
+    percent_95[k] = 0;
     
   }
+  
+  issues[0] = 0;
+  percent_50[0] = hjan[static_cast<int>(0.50*n)];
+  percent_80[0] = hjan[static_cast<int>(0.80*n)];
+  percent_95[0] = hjan[static_cast<int>(0.95*n)];;
+  
+  
+  issues[1] = accumulate(ijan.begin(), ijan.end(), 0) ;
+  percent_50[1] = issues[1] + hfeb[static_cast<int>(0.50*n)];
+  percent_80[1] = issues[1] + hfeb[static_cast<int>(0.80*n)];
+  percent_95[1] = issues[1] + hfeb[static_cast<int>(0.95*n)];;
+  
+  
+  
 
   return;  
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
 
 extern "C" double py_collapse_all(int n, double* b0, double* e0, double* w0, double* p0)  {
   
