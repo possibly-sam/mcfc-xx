@@ -39,14 +39,7 @@ rm(cm0)
 ```
 
 
-```{python}
 
-
-import ctypes
-import numpy as np
-import numpy.ctypeslib as ctl
-
-testlib = ctypes.CDLL('/home/phillip/Documents/stt/project-hack-vi/mcfc-xx/pysrc/testlib.so')
 # testlib.do_mc(99)
 
 py_print_array = testlib.print_array
@@ -60,6 +53,23 @@ print("\n\n")
 
 
 
+
+
+```{python}
+
+import ctypes
+import numpy as np
+import numpy.ctypeslib as ctl
+import pandas as pd
+
+xxx = pd.read_csv('src/xxx.csv')
+Bx = np.array(xxx['b'], dtype=np.float64)
+Ex = np.array(xxx['e'], dtype=np.float64)
+Wx = np.array(xxx['w'], dtype=np.float64)
+Px = np.array(xxx['p'], dtype=np.float64)
+
+testlib = ctypes.CDLL('/home/phillip/Documents/stt/project-hack-vi/mcfc-xx/pysrc/testlib.so')
+
 mcfc_collapse_all = testlib.py_collapse_all
 mcfc_collapse_all.restype = ctypes.c_double
 mcfc_collapse_all.argtypes = [ctypes.c_int,
@@ -68,12 +78,66 @@ mcfc_collapse_all.argtypes = [ctypes.c_int,
                                 ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), 
                                 ctl.ndpointer(np.float64, flags='aligned, c_contiguous') ]
 
-print(mcfc_collapse_all(5, A, A, A, A));
+x0 = mcfc_collapse_all(99, Bx, Ex, Wx, Px);
 
-print("\n\n\nfrodo livesx");
+print(x0);
+
+```
+
+
+# Py Months
+
+```{python}
+
+from ctypes import *
+
+import numpy as np
+import numpy.ctypeslib as ctl
+import pandas as pd
+  
+testlib = CDLL('/home/phillip/Documents/stt/project-hack-vi/mcfc-xx/pysrc/testlib.so')
+
+
+xxx = pd.read_csv('src/xxx.csv')
+Bx = np.array(xxx['b'], dtype=np.float64)
+Ex = np.array(xxx['e'], dtype=np.float64)
+Wx = np.array(xxx['w'], dtype=np.float64)
+Px = np.array(xxx['p'], dtype=np.float64)
+
+  
+
+testlib.py_months.argtypes = c_int, POINTER(c_double), POINTER(c_double), POINTER(c_double), POINTER(c_double),c_int, ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), ctl.ndpointer(np.float64, flags='aligned, c_contiguous'), ctl.ndpointer(np.float64, flags='aligned, c_contiguous')
+testlib.py_months.restype = None
+
+
+issues = (c_double*12)()
+percent_50 = (c_double*12)()
+percent_80 = (c_double*12)()
+percent_95 = (c_double*12)()
+
+
+testlib.py_months(12, issues, percent_50, percent_80, percent_95, 99, Bx, Ex, Wx, Px)
+
+print(list(issues))
+print(list(percent_50))
+print(list(percent_80))
+print(list(percent_95))
 
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r}
 library(tidyverse)

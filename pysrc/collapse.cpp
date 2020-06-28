@@ -112,13 +112,40 @@ extern "C" void print_array(double* array, int N)
     cout << i << " " << array[i] << endl;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////
 
+
+extern "C" void py_months(int n_months, 
+                         double* issues,
+                         double* percent_50,
+                         double* percent_80,
+                         double* percent_95,
+                         int n, double* b0, double* e0, double* w0, double* p0 )  {
+
+  for (int k = 0; k != n_months; ++k) {
+    issues[k] = 1.1+k; 
+    percent_50[k] = 2.2 + k;
+    percent_80[k] = 4.4 + k;
+    percent_95[k] = 8.8 + k;
+    
+  }
+
+  return;  
+}
 
 extern "C" double py_collapse_all(int n, double* b0, double* e0, double* w0, double* p0)  {
   
-  double x0 = accumulate(b0, static_cast<double*>(b0+n),0) ;
+  NumericVector  b(b0, b0+n);
+  NumericVector  e(e0, e0+n);
+  NumericVector  w(w0, w0+n);
+  NumericVector  p(p0, p0+n);
+  
+  NumericVector  r0 = collapse_all(b,e,w,p);
+  
+  
+  double x0 = accumulate(r0.begin(), r0.end(), 0) ;
   cout << "x0:  "<< x0 << endl;
-  return x0;
+  return p.size();
   
   
   }
